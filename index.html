@@ -137,6 +137,40 @@ button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-siz
 
 <script>
 
+  // ===== URL AUTO FILL =====
+
+const params = new URLSearchParams(window.location.search);
+
+const leadId =
+    params.get("leadid") || "";
+
+const vendorFromUrl =
+    params.get("vendor") || "";
+
+const sessionId =
+    localStorage.getItem("sessionId") ||
+    (Date.now() + "_" + Math.random().toString(36).substring(2));
+
+localStorage.setItem("sessionId", sessionId);
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    document.getElementById("vendorName").value =
+        vendorFromUrl;
+
+    document.getElementById("customerName").value =
+        params.get("name") || "";
+
+    document.getElementById("mobile").value =
+        params.get("mobile") || "";
+
+    document.getElementById("address").value =
+        params.get("address") || "";
+
+    trackEvent("landing");
+
+});
+
   // ✅ PASTE YOUR GOOGLE SCRIPT URL HERE
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-joCZOs4TPIBk1udDwHg3jDJKa11gMwAcVGYe4Q7LGy5F_SGUtiFszn_1mcGUalX7KQ/exec";
 
