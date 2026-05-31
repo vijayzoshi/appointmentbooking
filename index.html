@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendor Appointment Dashboard</title>
+<style>
+:root {
+  --primary: #0d6efd;
+  --primary-dark: #0b5ed7;
+  --success: #198754;
+  --background: #f4f7fc;
+  --card: #ffffff;
+  --text: #212529;
+  --border: #dee2e6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Segoe UI, Arial, sans-serif; }
+body { background: var(--background); min-height: 100vh; padding: 15px; }
+.container { max-width: 500px; margin: auto; }
+.header { text-align: center; margin-bottom: 20px; }
+.header h1 { color: var(--primary); font-size: 24px; }
+.header p { color: #666; margin-top: 5px; }
+.page { display: none; }
+.page.active { display: block; }
+.card { background: var(--card); border-radius: 18px; padding: 20px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
+.form-group { margin-bottom: 15px; }
+label { display: block; font-size: 14px; margin-bottom: 6px; font-weight: 600; }
+input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; }
+textarea { min-height: 90px; resize: none; }
+button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
+.primary-btn { background: var(--primary); color: white; }
+.primary-btn:hover { background: var(--primary-dark); }
+.secondary-btn { background: #6c757d; color: white; margin-top: 10px; }
+.summary-box { background: #f8f9fa; padding: 15px; border-radius: 10px; line-height: 1.9; margin-bottom: 15px; }
+.summary-item { border-bottom: 1px solid #e9ecef; padding: 6px 0; }
+.summary-item:last-child { border: none; }
+.success { text-align: center; }
+.success-icon { font-size: 70px; margin-bottom: 15px; }
+.success h2 { color: var(--success); }
+.success-card { background: #f8fff9; border: 1px solid #d1e7dd; padding: 15px; border-radius: 12px; margin: 15px 0; }
+.loader { display: none; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; padding: 10px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📅 Appointment Dashboard</h1>
+    <p>Book Customer Appointments</p>
+  </div>
+
+  <!-- PAGE 1: Form -->
+  <div id="page1" class="page active">
+    <div class="card">
+
+      <div class="form-group">
+        <label>Vendor Name *</label>
+        <input type="text" id="vendorName" placeholder="Enter Vendor Name">
+      </div>
+
+      <div class="form-group">
+        <label>Customer Name *</label>
+        <input type="text" id="customerName" placeholder="Enter Customer Name">
+      </div>
+
+      <div class="form-group">
+        <label>Mobile Number *</label>
+        <input type="tel" id="mobile" placeholder="Enter Mobile Number">
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <textarea id="address" placeholder="Enter Address"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Appointment Date *</label>
+        <input type="date" id="appointmentDate">
+      </div>
+
+      <div class="form-group">
+        <label>Appointment Time *</label>
+        <input type="time" id="appointmentTime">
+      </div>
+
+      <div class="form-group">
+        <label>Service Type *</label>
+        <select id="serviceType">
+          <option value="">Select Service</option>
+          <option>Installation</option>
+          <option>Repair</option>
+          <option>Consultation</option>
+          <option>Inspection</option>
+          <option>Maintenance</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="remarks" placeholder="Optional"></textarea>
+      </div>
+
+      <button class="primary-btn" onclick="reviewAppointment()">
+        Review Appointment
+      </button>
+
+    </div>
+  </div>
+
+  <!-- PAGE 2: Review -->
+  <div id="page2" class="page">
+    <div class="card">
+      <h2 style="margin-bottom:15px;">Confirm Appointment</h2>
+      <div id="summaryBox" class="summary-box"></div>
+      <button class="primary-btn" onclick="saveAppointment()">Confirm & Save</button>
+      <button class="secondary-btn" onclick="showPage('page1')">Edit Details</button>
+      <div class="loader" id="loader">⏳ Saving Appointment, please wait...</div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: Success -->
+  <div id="page3" class="page">
+    <div class="card success">
+      <div class="success-icon">✅</div>
+      <h2>Appointment Booked Successfully!</h2>
+      <div class="success-card">
+        <p><strong>Appointment ID</strong></p>
+        <h3 id="appointmentId" style="color:#198754; margin-top:5px;"></h3>
+      </div>
+      <p>Data has been saved to Google Sheet.</p>
+      <br>
+      <button class="primary-btn" onclick="resetForm()">Book New Appointment</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+  // ✅ PASTE YOUR GOOGLE SCRIPT URL HERE
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-joCZOs4TPIBk1udDwHg3jDJKa11gMwAcVGYe4Q7LGy5F_SGUtiFszn_1mcGUalX7KQ/exec";
+
+  let appointmentData = {};
+
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+  }
+
+  function reviewAppointment() {
+    const vendorName     = document.getElementById("vendorName").value.trim();
+    const customerName   = document.getElementById("customerName").value.trim();
+    const mobile         = document.getElementById("mobile").value.trim();
+    const address        = document.getElementById("address").value.trim();
+    const appointmentDate = document.getElementById("appointmentDate").value;
+    const appointmentTime = document.getElementById("appointmentTime").value;
+    const serviceType    = document.getElementById("serviceType").value;
+    const remarks        = document.getElementById("remarks").value.trim();
+
+    if (!vendorName || !customerName || !mobile || !appointmentDate || !appointmentTime || !serviceType) {
+      alert("⚠️ Please fill all mandatory fields marked with *");
+      return;
+    }
+
+    appointmentData = {
+      appointmentId: "APT" + Date.now(),
+      vendorName, customerName, mobile, address,
+      appointmentDate, appointmentTime, serviceType, remarks,
+      createdAt: new Date().toLocaleString()
+    };
+
+    document.getElementById("summaryBox").innerHTML = `
+      <div class="summary-item"><b>Vendor:</b> ${vendorName}</div>
+      <div class="summary-item"><b>Customer:</b> ${customerName}</div>
+      <div class="summary-item"><b>Mobile:</b> ${mobile}</div>
+      <div class="summary-item"><b>Address:</b> ${address || "-"}</div>
+      <div class="summary-item"><b>Date:</b> ${appointmentDate}</div>
+      <div class="summary-item"><b>Time:</b> ${appointmentTime}</div>
+      <div class="summary-item"><b>Service:</b> ${serviceType}</div>
+      <div class="summary-item"><b>Remarks:</b> ${remarks || "-"}</div>
+    `;
+
+    showPage("page2");
+  }
+
+  async function saveAppointment() {
+    const loader = document.getElementById("loader");
+    const confirmBtn = document.querySelector("#page2 .primary-btn");
+
+    // Show loader, disable button
+    loader.style.display = "block";
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Saving...";
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",           // ✅ Required for Google Apps Script
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(appointmentData)
+      });
+
+      // no-cors returns opaque response — assume success if no error thrown
+      loader.style.display = "none";
+      document.getElementById("appointmentId").textContent = appointmentData.appointmentId;
+      showPage("page3");
+
+    } catch (error) {
+      loader.style.display = "none";
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Confirm & Save";
+      alert("❌ Error saving appointment: " + error.message);
+      console.error(error);
+    }
+  }
+
+  function resetForm() {
+    location.reload();
+  }
+
+</script>
+</body>
+</html>
