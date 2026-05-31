@@ -3,86 +3,550 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vendor Appointment Dashboard</title>
+<title>Justdial - Vendor Appointment Dashboard</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
 :root {
-  --primary: #0d6efd;
-  --primary-dark: #0b5ed7;
-  --success: #198754;
-  --background: #f4f7fc;
+  --primary: #3b4fc7;
+  --primary-dark: #2a3bad;
+  --primary-light: #eef2ff;
+  --primary-gradient: linear-gradient(135deg, #4c5fd7 0%, #3b4fc7 100%);
+  --success: #10b981;
+  --background: #f8fafc;
   --card: #ffffff;
-  --text: #212529;
-  --border: #dee2e6;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 10px 20px -5px rgba(59, 79, 199, 0.3);
 }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: Segoe UI, Arial, sans-serif; }
-body { background: var(--background); min-height: 100vh; padding: 15px; }
-.container { max-width: 500px; margin: auto; }
-.header { text-align: center; margin-bottom: 20px; }
-.header h1 { color: var(--primary); font-size: 24px; }
-.header p { color: #666; margin-top: 5px; }
-.page { display: none; }
-.page.active { display: block; }
-.card { background: var(--card); border-radius: 18px; padding: 20px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); }
-.form-group { margin-bottom: 15px; }
-label { display: block; font-size: 14px; margin-bottom: 6px; font-weight: 600; }
-input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; }
-textarea { min-height: 90px; resize: none; }
-button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
-.primary-btn { background: var(--primary); color: white; }
-.primary-btn:hover { background: var(--primary-dark); }
-.secondary-btn { background: #6c757d; color: white; margin-top: 10px; }
-.summary-box { background: #f8f9fa; padding: 15px; border-radius: 10px; line-height: 1.9; margin-bottom: 15px; }
-.summary-item { border-bottom: 1px solid #e9ecef; padding: 6px 0; }
-.summary-item:last-child { border: none; }
-.success { text-align: center; }
-.success-icon { font-size: 70px; margin-bottom: 15px; }
-.success h2 { color: var(--success); }
-.success-card { background: #f8fff9; border: 1px solid #d1e7dd; padding: 15px; border-radius: 12px; margin: 15px 0; }
-.loader { display: none; text-align: center; margin-top: 15px; color: var(--primary); font-weight: bold; padding: 10px; }
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+  font-family: 'Plus Jakarta Sans', Segoe UI, sans-serif; 
+}
+body { 
+  background: var(--background); 
+  min-height: 100vh; 
+  padding: 20px 15px; 
+  color: var(--text);
+  line-height: 1.5;
+}
+.container { 
+  max-width: 500px; 
+  margin: 0 auto; 
+}
+.header { 
+  text-align: center; 
+  margin-bottom: 24px; 
+}
+.header h1 { 
+  font-family: 'Outfit', sans-serif;
+  color: var(--primary); 
+  font-size: 26px; 
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.header p { 
+  color: var(--text-muted); 
+  margin-top: 6px; 
+  font-size: 15px;
+}
+.page { 
+  display: none; 
+}
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(12px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+.page.active { 
+  display: block; 
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.card { 
+  background: var(--card); 
+  border-radius: 20px; 
+  padding: 24px; 
+  box-shadow: var(--shadow-lg); 
+  border: 1px solid var(--border);
+}
+/* Intro Page Styling */
+.intro-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+  color: var(--text);
+}
+.intro-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 20px;
+}
+.video-container {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: #000;
+  aspect-ratio: 16/9;
+  margin-bottom: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.benefits-section {
+  margin-bottom: 24px;
+}
+.benefits-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+.benefit-item:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+}
+.benefit-icon {
+  font-size: 18px;
+  background: var(--primary-light);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.benefit-content {
+  flex: 1;
+}
+.benefit-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.benefit-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+/* Forms & UI */
+.form-group { 
+  margin-bottom: 18px; 
+}
+label { 
+  display: block; 
+  font-size: 13.5px; 
+  margin-bottom: 6px; 
+  font-weight: 600; 
+  color: var(--text);
+}
+input, textarea, select { 
+  width: 100%; 
+  padding: 12px 14px; 
+  border: 1px solid var(--border); 
+  border-radius: 12px; 
+  font-size: 14.5px; 
+  background: #f8fafc;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 79, 199, 0.15);
+}
+textarea { 
+  min-height: 90px; 
+  resize: none; 
+}
+button { 
+  width: 100%; 
+  padding: 14px; 
+  border: none; 
+  border-radius: 12px; 
+  font-size: 15.5px; 
+  font-weight: 600; 
+  cursor: pointer; 
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.primary-btn { 
+  background: var(--primary-gradient); 
+  color: white; 
+  box-shadow: var(--shadow-glow);
+}
+.primary-btn:hover { 
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px -6px rgba(59, 79, 199, 0.4);
+}
+.primary-btn:active {
+  transform: translateY(1px);
+}
+.secondary-btn { 
+  background: #f1f5f9; 
+  color: #475569; 
+  border: 1px solid var(--border);
+  margin-top: 10px; 
+}
+.secondary-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+/* Appointment Slot Page Styling */
+.slot-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  position: relative;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1e293b;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  width: 24px;
+}
+.back-btn:hover {
+  transform: translateX(-2px);
+}
+.slot-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  flex-grow: 1;
+  margin-right: 24px; /* Offset to center title perfectly */
+  color: var(--text);
+}
+.calendar-container {
+  background: #ffffff;
+  padding: 8px 0;
+  margin-bottom: 24px;
+}
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.calendar-month {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.calendar-nav-btn {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+.calendar-nav-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 8px;
+  column-gap: 8px;
+  text-align: center;
+}
+.calendar-day {
+  font-size: 14px;
+  font-weight: 600;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #1e293b;
+}
+.calendar-day.empty {
+  cursor: default;
+}
+.calendar-day.disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+.calendar-day.selected {
+  background: var(--primary) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(59, 79, 199, 0.4);
+}
+.calendar-day:not(.disabled):not(.selected):not(.empty):hover {
+  background: #f1f5f9;
+}
+.time-slots-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.slot-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.slot-group-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.slot-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.time-slot {
+  background: #f1f5f9;
+  border: none;
+  padding: 12px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #1e293b;
+}
+.time-slot:hover:not(.disabled) {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+.time-slot.selected {
+  background: var(--primary) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(59, 79, 199, 0.3);
+}
+.time-slot.disabled {
+  color: #cbd5e1;
+  background: #f8fafc;
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+.summary-box { 
+  background: var(--background); 
+  padding: 18px; 
+  border-radius: 14px; 
+  margin-bottom: 20px; 
+  border: 1px solid var(--border);
+}
+.summary-item { 
+  border-bottom: 1px solid var(--border); 
+  padding: 8px 0; 
+  font-size: 14.5px;
+  display: flex;
+  justify-content: space-between;
+}
+.summary-item:last-child { 
+  border: none; 
+}
+.summary-item b {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.summary-item span {
+  font-weight: 600;
+  color: var(--text);
+}
+.success { 
+  text-align: center; 
+}
+.success-icon { 
+  font-size: 64px; 
+  margin-bottom: 16px; 
+  animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes scaleUp {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.success h2 { 
+  color: var(--success); 
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.success-card { 
+  background: #ecfdf5; 
+  border: 1px solid #a7f3d0; 
+  padding: 18px; 
+  border-radius: 14px; 
+  margin: 20px 0; 
+}
+.loader { 
+  display: none; 
+  text-align: center; 
+  margin-top: 15px; 
+  color: var(--primary); 
+  font-weight: 600; 
+  padding: 10px; 
+  font-size: 14px;
+}
 </style>
 </head>
 <body>
-
 <div class="container">
   <div class="header">
     <h1>📅 Appointment Dashboard</h1>
     <p>Book Customer Appointments</p>
   </div>
-
-  <!-- PAGE 1: Form -->
-  <div id="page1" class="page active">
+  <!-- PAGE 0: Intro & Benefits -->
+  <div id="page0" class="page active">
     <div class="card">
-
+      <h2 class="intro-title">Grow Your Business with Justdial</h2>
+      <p class="intro-subtitle">Watch how premium listing boosts customer acquisition</p>
+      
+      <!-- Video Container -->
+      <div class="video-container">
+        <video controls playsinline>
+          <source src="https://stream.jdmagicbox.com/commsvideo/20260520/incentive-b2c-lmfmks6nul.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <!-- Benefits Section -->
+      <div class="benefits-section">
+        <h3 class="benefits-section-title">
+          <span>✨</span> Justdial Plans & Benefits
+        </h3>
+        
+        <div class="benefits-list">
+          <div class="benefit-item">
+            <div class="benefit-icon">🚀</div>
+            <div class="benefit-content">
+              <h4 class="benefit-title">Top Listing Placement</h4>
+              <p class="benefit-desc">Appear at the top of local search results when customers search for your service.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">🛡️</div>
+            <div class="benefit-content">
+              <h4 class="benefit-title">Verified Trust Badge</h4>
+              <p class="benefit-desc">Earn the "JD Verified" and "JD Trusted" stamps to build instant credibility.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">💬</div>
+            <div class="benefit-content">
+              <h4 class="benefit-title">Instant Enquiry Alerts</h4>
+              <p class="benefit-desc">Get customer phone numbers, requirements, and locations directly via WhatsApp & SMS.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">📊</div>
+            <div class="benefit-content">
+              <h4 class="benefit-title">Analytics & Lead Tracker</h4>
+              <p class="benefit-desc">Monitor catalog views, track inquiries, and reply to customer reviews easily.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="primary-btn" onclick="showPage('page1')">
+        Proceed to Book Appointment ➔
+      </button>
+    </div>
+  </div>
+  <!-- PAGE 1: Form -->
+  <div id="page1" class="page">
+    <div class="card">
       <div class="form-group">
         <label>Vendor Name *</label>
         <input type="text" id="vendorName" placeholder="Enter Vendor Name">
       </div>
-
       <div class="form-group">
         <label>Customer Name *</label>
         <input type="text" id="customerName" placeholder="Enter Customer Name">
       </div>
-
       <div class="form-group">
         <label>Mobile Number *</label>
         <input type="tel" id="mobile" placeholder="Enter Mobile Number">
       </div>
-
       <div class="form-group">
         <label>Address</label>
         <textarea id="address" placeholder="Enter Address"></textarea>
       </div>
-
-      <div class="form-group">
-        <label>Appointment Date *</label>
-        <input type="date" id="appointmentDate">
-      </div>
-
-      <div class="form-group">
-        <label>Appointment Time *</label>
-        <input type="time" id="appointmentTime">
-      </div>
-
       <div class="form-group">
         <label>Service Type *</label>
         <select id="serviceType">
@@ -94,30 +558,138 @@ button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-siz
           <option>Maintenance</option>
         </select>
       </div>
-
       <div class="form-group">
         <label>Remarks</label>
-        <textarea id="remarks" placeholder="Optional"></textarea>
+        <textarea id="remarks" placeholder="Optional Remarks"></textarea>
       </div>
-
-      <button class="primary-btn" onclick="reviewAppointment()">
-        Review Appointment
+      <button class="primary-btn" onclick="goToSlotSelection()">
+        Select Appointment Slot ➔
       </button>
-
+      <button class="secondary-btn" onclick="showPage('page0')">
+        Back to Benefits
+      </button>
     </div>
   </div>
-
+  <!-- PAGE 1.5: Appointment Slot Selection -->
+  <div id="pageSlot" class="page">
+    <div class="card">
+      <div class="slot-header">
+        <button class="back-btn" onclick="showPage('page1')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <div class="slot-title">Appointment Slot</div>
+      </div>
+      <!-- Interactive Calendar -->
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button class="calendar-nav-btn" onclick="changeMonth(-1)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <div id="calendarMonthText" class="calendar-month">October 2023</div>
+          <button class="calendar-nav-btn" onclick="changeMonth(1)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div class="calendar-weekdays">
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+        </div>
+        <div id="calendarDaysContainer" class="calendar-days"></div>
+      </div>
+      <!-- Time Slots Grid -->
+      <div class="time-slots-section">
+        <!-- Morning -->
+        <div class="slot-group">
+          <div class="slot-group-header">
+            <svg class="slot-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            Morning
+          </div>
+          <div class="slots-grid" id="morningSlots">
+            <div class="time-slot" data-time="09:00 AM">09:00 AM</div>
+            <div class="time-slot" data-time="09:30 AM">09:30 AM</div>
+            <div class="time-slot" data-time="10:00 AM">10:00 AM</div>
+            <div class="time-slot" data-time="10:30 AM">10:30 AM</div>
+            <div class="time-slot" data-time="11:00 AM">11:00 AM</div>
+          </div>
+        </div>
+        <!-- Afternoon -->
+        <div class="slot-group">
+          <div class="slot-group-header">
+            <svg class="slot-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            Afternoon
+          </div>
+          <div class="slots-grid" id="afternoonSlots">
+            <div class="time-slot" data-time="01:00 PM">01:00 PM</div>
+            <div class="time-slot" data-time="01:30 PM">01:30 PM</div>
+            <div class="time-slot" data-time="02:30 PM">02:30 PM</div>
+            <div class="time-slot" data-time="03:00 PM">03:00 PM</div>
+            <div class="time-slot" data-time="04:00 PM">04:00 PM</div>
+          </div>
+        </div>
+        <!-- Evening -->
+        <div class="slot-group">
+          <div class="slot-group-header">
+            <svg class="slot-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            Evening
+          </div>
+          <div class="slots-grid" id="eveningSlots">
+            <div class="time-slot" data-time="06:00 PM">06:00 PM</div>
+            <div class="time-slot" data-time="06:30 PM">06:30 PM</div>
+            <div class="time-slot" data-time="07:00 PM">07:00 PM</div>
+          </div>
+        </div>
+      </div>
+      <button class="primary-btn" onclick="goToReview()">
+        Continue ➔
+      </button>
+    </div>
+  </div>
   <!-- PAGE 2: Review -->
   <div id="page2" class="page">
     <div class="card">
-      <h2 style="margin-bottom:15px;">Confirm Appointment</h2>
+      <h2 style="margin-bottom:15px; font-family: 'Outfit', sans-serif;">Confirm Appointment</h2>
       <div id="summaryBox" class="summary-box"></div>
+      
       <button class="primary-btn" onclick="saveAppointment()">Confirm & Save</button>
       <button class="secondary-btn" onclick="showPage('page1')">Edit Details</button>
+      
       <div class="loader" id="loader">⏳ Saving Appointment, please wait...</div>
     </div>
   </div>
-
   <!-- PAGE 3: Success -->
   <div id="page3" class="page">
     <div class="card success">
@@ -125,107 +697,221 @@ button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-siz
       <h2>Appointment Booked Successfully!</h2>
       <div class="success-card">
         <p><strong>Appointment ID</strong></p>
-        <h3 id="appointmentId" style="color:#198754; margin-top:5px;"></h3>
+        <h3 id="appointmentId" style="color:var(--success); margin-top:5px; font-family: 'Outfit', sans-serif;"></h3>
       </div>
-      <p>Data has been saved to Google Sheet.</p>
+      <p style="color: var(--text-muted);">Data has been saved to Google Sheet.</p>
       <br>
       <button class="primary-btn" onclick="resetForm()">Book New Appointment</button>
     </div>
   </div>
-
 </div>
-
 <script>
-
   // ===== URL AUTO FILL =====
-
 const params = new URLSearchParams(window.location.search);
-
 const leadId =
     params.get("leadid") || "";
-
 const vendorFromUrl =
     params.get("vendor") || "";
-
 const sessionId =
     localStorage.getItem("sessionId") ||
     (Date.now() + "_" + Math.random().toString(36).substring(2));
-
 localStorage.setItem("sessionId", sessionId);
-
+// Track function fallback to prevent errors
+function trackEvent(eventName) {
+  console.log("Event tracked:", eventName);
+}
+// Global variables for Selected Date & Time
+let currentCalendarDate = new Date(); // Tracks month in calendar view
+let selectedDate = new Date(); // Preset to today
+let selectedTime = null; // Stores time slot selected (e.g. '09:30 AM')
 window.addEventListener("DOMContentLoaded", () => {
-
     document.getElementById("vendorName").value =
         vendorFromUrl;
-
     document.getElementById("customerName").value =
         params.get("name") || "";
-
     document.getElementById("mobile").value =
         params.get("mobile") || "";
-
     document.getElementById("address").value =
         params.get("address") || "";
-
     trackEvent("landing");
-
+    // Initialize calendar renderer
+    renderCalendar();
+    
+    // Setup time slot selection listeners
+    document.querySelectorAll(".time-slot").forEach(slot => {
+      slot.addEventListener("click", () => {
+        if (slot.classList.contains("disabled")) return;
+        
+        // Remove previous active selection
+        document.querySelectorAll(".time-slot.selected").forEach(el => el.classList.remove("selected"));
+        
+        // Add active selection class
+        slot.classList.add("selected");
+        selectedTime = slot.getAttribute("data-time");
+      });
+    });
 });
-
-  // ✅ PASTE YOUR GOOGLE SCRIPT URL HERE
+  // ✅ GOOGLE SCRIPT URL
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-joCZOs4TPIBk1udDwHg3jDJKa11gMwAcVGYe4Q7LGy5F_SGUtiFszn_1mcGUalX7KQ/exec";
-
   let appointmentData = {};
-
   function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
+    
+    // Pause video if navigating away from page0
+    if (pageId !== 'page0') {
+      const video = document.querySelector('.video-container video');
+      if (video && !video.paused) {
+        video.pause();
+      }
+    }
   }
-
-  function reviewAppointment() {
+  // Handle flow transitions from Page 1 to Slot selection
+  function goToSlotSelection() {
     const vendorName     = document.getElementById("vendorName").value.trim();
     const customerName   = document.getElementById("customerName").value.trim();
     const mobile         = document.getElementById("mobile").value.trim();
     const address        = document.getElementById("address").value.trim();
-    const appointmentDate = document.getElementById("appointmentDate").value;
-    const appointmentTime = document.getElementById("appointmentTime").value;
     const serviceType    = document.getElementById("serviceType").value;
     const remarks        = document.getElementById("remarks").value.trim();
-
-    if (!vendorName || !customerName || !mobile || !appointmentDate || !appointmentTime || !serviceType) {
+    if (!vendorName || !customerName || !mobile || !serviceType) {
       alert("⚠️ Please fill all mandatory fields marked with *");
       return;
     }
-
     appointmentData = {
-      appointmentId: "APT" + Date.now(),
-      vendorName, customerName, mobile, address,
-      appointmentDate, appointmentTime, serviceType, remarks,
-      createdAt: new Date().toLocaleString()
+      vendorName, customerName, mobile, address, serviceType, remarks
     };
-
+    showPage("pageSlot");
+    renderCalendar();
+    simulateTimeSlotAvailability();
+  }
+  // Custom Interactive Calendar logic
+  function renderCalendar() {
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+    
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    document.getElementById("calendarMonthText").textContent = `${monthNames[month]} ${year}`;
+    
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    
+    const daysContainer = document.getElementById("calendarDaysContainer");
+    daysContainer.innerHTML = "";
+    
+    // Create empty offset days
+    for (let i = 0; i < firstDayIndex; i++) {
+      const emptyDay = document.createElement("div");
+      emptyDay.classList.add("calendar-day", "empty");
+      daysContainer.appendChild(emptyDay);
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Create date day elements
+    for (let day = 1; day <= lastDay; day++) {
+      const dayDiv = document.createElement("div");
+      dayDiv.classList.add("calendar-day");
+      dayDiv.textContent = day;
+      
+      const thisDate = new Date(year, month, day);
+      
+      if (thisDate < today) {
+        dayDiv.classList.add("disabled");
+      } else {
+        // Highlight if matches current selected date
+        if (selectedDate && 
+            selectedDate.getDate() === day && 
+            selectedDate.getMonth() === month && 
+            selectedDate.getFullYear() === year) {
+          dayDiv.classList.add("selected");
+        }
+        
+        dayDiv.addEventListener("click", () => {
+          document.querySelectorAll(".calendar-day.selected").forEach(el => el.classList.remove("selected"));
+          dayDiv.classList.add("selected");
+          selectedDate = new Date(year, month, day);
+          
+          // Re-simulate random slots for new date & reset time slot state if it is disabled
+          simulateTimeSlotAvailability();
+        });
+      }
+      daysContainer.appendChild(dayDiv);
+    }
+  }
+  function changeMonth(direction) {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
+    renderCalendar();
+  }
+  // Simulates booked (disabled) time slots depending on the selected date to match original screenshot look
+  function simulateTimeSlotAvailability() {
+    const slots = document.querySelectorAll(".time-slot");
+    
+    // Reset all slots first
+    slots.forEach(slot => {
+      slot.classList.remove("disabled");
+    });
+    
+    if (selectedDate) {
+      const daySeed = selectedDate.getDate();
+      
+      // Determine which index slots to disable dynamically
+      const index1 = (daySeed * 3) % slots.length;
+      const index2 = (daySeed + 7) % slots.length;
+      
+      slots[index1].classList.add("disabled");
+      slots[index2].classList.add("disabled");
+      
+      // If the currently selected time slot became disabled, reset selection
+      if (slots[index1].classList.contains("selected") || slots[index2].classList.contains("selected")) {
+        slots.forEach(s => s.classList.remove("selected"));
+        selectedTime = null;
+      }
+    }
+  }
+  function goToReview() {
+    if (!selectedDate) {
+      alert("⚠️ Please select an appointment date.");
+      return;
+    }
+    if (!selectedTime) {
+      alert("⚠️ Please select an appointment time slot.");
+      return;
+    }
+    // Format selectedDate for visual presentation
+    const visualDateStr = selectedDate.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    // Populate full body properties
+    appointmentData.appointmentId = "APT" + Date.now();
+    appointmentData.appointmentDate = selectedDate.toISOString().split('T')[0]; // Format standard YYYY-MM-DD
+    appointmentData.appointmentTime = selectedTime;
+    appointmentData.createdAt = new Date().toLocaleString();
     document.getElementById("summaryBox").innerHTML = `
-      <div class="summary-item"><b>Vendor:</b> ${vendorName}</div>
-      <div class="summary-item"><b>Customer:</b> ${customerName}</div>
-      <div class="summary-item"><b>Mobile:</b> ${mobile}</div>
-      <div class="summary-item"><b>Address:</b> ${address || "-"}</div>
-      <div class="summary-item"><b>Date:</b> ${appointmentDate}</div>
-      <div class="summary-item"><b>Time:</b> ${appointmentTime}</div>
-      <div class="summary-item"><b>Service:</b> ${serviceType}</div>
-      <div class="summary-item"><b>Remarks:</b> ${remarks || "-"}</div>
+      <div class="summary-item"><b>Vendor:</b> <span>${appointmentData.vendorName}</span></div>
+      <div class="summary-item"><b>Customer:</b> <span>${appointmentData.customerName}</span></div>
+      <div class="summary-item"><b>Mobile:</b> <span>${appointmentData.mobile}</span></div>
+      <div class="summary-item"><b>Address:</b> <span>${appointmentData.address || "-"}</span></div>
+      <div class="summary-item"><b>Date:</b> <span>${visualDateStr}</span></div>
+      <div class="summary-item"><b>Time:</b> <span>${appointmentData.appointmentTime}</span></div>
+      <div class="summary-item"><b>Service:</b> <span>${appointmentData.serviceType}</span></div>
+      <div class="summary-item"><b>Remarks:</b> <span>${appointmentData.remarks || "-"}</span></div>
     `;
-
     showPage("page2");
   }
-
   async function saveAppointment() {
     const loader = document.getElementById("loader");
     const confirmBtn = document.querySelector("#page2 .primary-btn");
-
     // Show loader, disable button
     loader.style.display = "block";
     confirmBtn.disabled = true;
     confirmBtn.textContent = "Saving...";
-
     try {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
@@ -233,12 +919,10 @@ window.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(appointmentData)
       });
-
       // no-cors returns opaque response — assume success if no error thrown
       loader.style.display = "none";
       document.getElementById("appointmentId").textContent = appointmentData.appointmentId;
       showPage("page3");
-
     } catch (error) {
       loader.style.display = "none";
       confirmBtn.disabled = false;
@@ -247,11 +931,9 @@ window.addEventListener("DOMContentLoaded", () => {
       console.error(error);
     }
   }
-
   function resetForm() {
     location.reload();
   }
-
 </script>
 </body>
 </html>
