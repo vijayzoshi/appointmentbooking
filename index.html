@@ -4,8 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Justdial - Vendor Appointment Dashboard</title>
+<!-- Leaflet.js for interactive OpenStreetMap -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
+
 :root {
   --primary: #3b4fc7;
   --primary-dark: #2a3bad;
@@ -22,27 +26,32 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-glow: 0 10px 20px -5px rgba(59, 79, 199, 0.3);
 }
+
 * { 
   margin: 0; 
   padding: 0; 
   box-sizing: border-box; 
   font-family: 'Plus Jakarta Sans', Segoe UI, sans-serif; 
 }
+
 body { 
   background: var(--background); 
   min-height: 100vh; 
-  padding: 20px 15px; 
+  padding: 24px 15px; 
   color: var(--text);
   line-height: 1.5;
 }
+
 .container { 
   max-width: 500px; 
   margin: 0 auto; 
 }
+
 .header { 
   text-align: center; 
   margin-bottom: 24px; 
 }
+
 .header h1 { 
   font-family: 'Outfit', sans-serif;
   color: var(--primary); 
@@ -50,14 +59,17 @@ body {
   font-weight: 700;
   letter-spacing: -0.5px;
 }
+
 .header p { 
   color: var(--text-muted); 
   margin-top: 6px; 
   font-size: 15px;
 }
+
 .page { 
   display: none; 
 }
+
 @keyframes fadeIn {
   from { 
     opacity: 0; 
@@ -68,32 +80,37 @@ body {
     transform: translateY(0); 
   }
 }
+
 .page.active { 
   display: block; 
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
 .card { 
   background: var(--card); 
-  border-radius: 20px; 
-  padding: 24px; 
+  border-radius: 24px; 
+  padding: 28px; 
   box-shadow: var(--shadow-lg); 
   border: 1px solid var(--border);
 }
+
 /* Intro Page Styling */
 .intro-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   margin-bottom: 8px;
   text-align: center;
   color: var(--text);
 }
+
 .intro-subtitle {
   font-size: 14px;
   color: var(--text-muted);
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
+
 .video-container {
   position: relative;
   width: 100%;
@@ -105,15 +122,18 @@ body {
   margin-bottom: 24px;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
+
 .video-container video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
+
 .benefits-section {
   margin-bottom: 24px;
 }
+
 .benefits-section-title {
   font-family: 'Outfit', sans-serif;
   font-size: 16px;
@@ -124,83 +144,98 @@ body {
   align-items: center;
   gap: 8px;
 }
+
 .benefits-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .benefit-item {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: 14px;
+  border-radius: 14px;
   background: var(--background);
   border: 1px solid var(--border);
   transition: all 0.2s ease;
 }
+
 .benefit-item:hover {
   transform: translateY(-2px);
   border-color: #cbd5e1;
   box-shadow: var(--shadow-sm);
 }
+
 .benefit-icon {
   font-size: 18px;
   background: var(--primary-light);
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary);
   flex-shrink: 0;
 }
+
 .benefit-content {
   flex: 1;
 }
+
 .benefit-title {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 2px;
 }
+
 .benefit-desc {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-muted);
   line-height: 1.4;
 }
+
 /* Forms & UI */
 .form-group { 
-  margin-bottom: 18px; 
+  margin-bottom: 20px; 
 }
+
 label { 
   display: block; 
-  font-size: 13.5px; 
+  font-size: 12px; 
   margin-bottom: 6px; 
-  font-weight: 600; 
-  color: var(--text);
+  font-weight: 700; 
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
+
 input, textarea, select { 
   width: 100%; 
   padding: 12px 14px; 
   border: 1px solid var(--border); 
   border-radius: 12px; 
   font-size: 14.5px; 
-  background: #f8fafc;
+  background: #ffffff;
   color: var(--text);
   transition: all 0.2s ease;
 }
+
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary);
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(59, 79, 199, 0.15);
+  box-shadow: 0 0 0 3.5px rgba(59, 79, 199, 0.1);
 }
+
 textarea { 
   min-height: 90px; 
   resize: none; 
 }
+
 button { 
   width: 100%; 
   padding: 14px; 
@@ -215,28 +250,34 @@ button {
   justify-content: center;
   gap: 8px;
 }
+
 .primary-btn { 
   background: var(--primary-gradient); 
   color: white; 
   box-shadow: var(--shadow-glow);
 }
+
 .primary-btn:hover { 
   transform: translateY(-1px);
   box-shadow: 0 12px 22px -6px rgba(59, 79, 199, 0.4);
 }
+
 .primary-btn:active {
   transform: translateY(1px);
 }
+
 .secondary-btn { 
   background: #f1f5f9; 
   color: #475569; 
   border: 1px solid var(--border);
   margin-top: 10px; 
 }
+
 .secondary-btn:hover {
   background: #e2e8f0;
   color: #334155;
 }
+
 /* Appointment Slot Page Styling */
 .slot-header {
   display: flex;
@@ -246,6 +287,7 @@ button {
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
 }
+
 .back-btn {
   background: none;
   border: none;
@@ -258,9 +300,11 @@ button {
   transition: transform 0.2s ease;
   width: 24px;
 }
+
 .back-btn:hover {
   transform: translateX(-2px);
 }
+
 .slot-title {
   font-family: 'Outfit', sans-serif;
   font-size: 18px;
@@ -270,96 +314,155 @@ button {
   margin-right: 24px; /* Offset to center title perfectly */
   color: var(--text);
 }
-.calendar-container {
+
+/* Location Search Elements */
+.search-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   background: #ffffff;
-  padding: 8px 0;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 79, 199, 0.1);
+}
+
+.search-btn {
+  width: auto;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 12px;
+  margin: 0;
+}
+
+#map {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  z-index: 1;
+}
+
+/* Custom Date Selector Row */
+.date-selector-container {
+  display: flex;
+  gap: 16px;
   margin-bottom: 24px;
 }
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.calendar-month {
-  font-family: 'Outfit', sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: #0f172a;
-}
-.calendar-nav-btn {
-  background: #f8fafc;
+
+.date-pill {
+  flex: 1;
+  background: #f1f5f9;
   border: 1px solid var(--border);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  padding: 14px;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #475569;
+  gap: 4px;
 }
-.calendar-nav-btn:hover {
+
+.date-pill:hover:not(.disabled):not(.selected) {
   background: #e2e8f0;
-  color: #0f172a;
+  transform: translateY(-1px);
 }
-.calendar-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-size: 11px;
+
+.date-pill.selected {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(59, 79, 199, 0.1);
+}
+
+.date-pill.selected .date-day-name {
+  color: var(--primary);
+}
+
+.date-pill.selected .date-day-val {
+  color: var(--primary);
   font-weight: 700;
-  color: #94a3b8;
-  margin-bottom: 12px;
+}
+
+.date-day-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  row-gap: 8px;
-  column-gap: 8px;
-  text-align: center;
-}
-.calendar-day {
-  font-size: 14px;
+
+.date-day-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
   font-weight: 600;
-  aspect-ratio: 1;
+  color: var(--text);
+}
+
+.date-pill.disabled {
+  opacity: 0.5;
+  background: #f8fafc;
+  border-color: var(--border);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.date-pill.disabled .date-day-val {
+  text-decoration: line-through;
+  color: #cbd5e1;
+}
+
+/* Locate button state */
+.locate-btn {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid rgba(59, 79, 199, 0.15);
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  color: #1e293b;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 12px;
 }
-.calendar-day.empty {
-  cursor: default;
+
+.locate-btn:hover {
+  background: #e0e7ff;
 }
-.calendar-day.disabled {
-  color: #cbd5e1;
-  cursor: not-allowed;
+
+.locate-btn.detected {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
 }
-.calendar-day.selected {
-  background: var(--primary) !important;
-  color: white !important;
-  box-shadow: 0 4px 12px rgba(59, 79, 199, 0.4);
-}
-.calendar-day:not(.disabled):not(.selected):not(.empty):hover {
-  background: #f1f5f9;
-}
+
 .time-slots-section {
   display: flex;
   flex-direction: column;
   gap: 20px;
   margin-bottom: 24px;
 }
+
 .slot-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .slot-group-header {
   font-size: 14px;
   font-weight: 700;
@@ -368,15 +471,18 @@ button {
   align-items: center;
   gap: 8px;
 }
+
 .slot-icon {
   color: var(--primary);
   flex-shrink: 0;
 }
+
 .slots-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
+
 .time-slot {
   background: #f1f5f9;
   border: none;
@@ -389,66 +495,81 @@ button {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   color: #1e293b;
 }
+
 .time-slot:hover:not(.disabled) {
   background: #e2e8f0;
   transform: translateY(-1px);
 }
+
 .time-slot.selected {
   background: var(--primary) !important;
   color: white !important;
   box-shadow: 0 4px 12px rgba(59, 79, 199, 0.3);
 }
+
 .time-slot.disabled {
   color: #cbd5e1;
   background: #f8fafc;
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.45;
   pointer-events: none;
   text-decoration: line-through;
 }
+
 .summary-box { 
   background: var(--background); 
-  padding: 18px; 
-  border-radius: 14px; 
-  margin-bottom: 20px; 
+  padding: 20px; 
+  border-radius: 16px; 
+  margin-bottom: 24px; 
   border: 1px solid var(--border);
 }
+
 .summary-item { 
   border-bottom: 1px solid var(--border); 
-  padding: 8px 0; 
+  padding: 10px 0; 
   font-size: 14.5px;
   display: flex;
   justify-content: space-between;
 }
+
 .summary-item:last-child { 
   border: none; 
 }
+
 .summary-item b {
   color: var(--text-muted);
   font-weight: 500;
 }
+
 .summary-item span {
   font-weight: 600;
   color: var(--text);
+  max-width: 60%;
+  text-align: right;
 }
+
 .success { 
   text-align: center; 
 }
+
 .success-icon { 
   font-size: 64px; 
   margin-bottom: 16px; 
   animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
+
 @keyframes scaleUp {
   from { transform: scale(0.6); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
 .success h2 { 
   color: var(--success); 
   font-family: 'Outfit', sans-serif;
   font-size: 22px;
   font-weight: 700;
 }
+
 .success-card { 
   background: #ecfdf5; 
   border: 1px solid #a7f3d0; 
@@ -456,25 +577,38 @@ button {
   border-radius: 14px; 
   margin: 20px 0; 
 }
+
 .loader { 
   display: none; 
   text-align: center; 
   margin-top: 15px; 
   color: var(--primary); 
   font-weight: 600; 
-  padding: 10px; 
-  font-size: 14px;
+  padding: 12px; 
+  font-size: 14.5px;
+  background: var(--primary-light);
+  border-radius: 12px;
+  border: 1px dashed var(--primary);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 </style>
 </head>
 <body>
+
 <div class="container">
-  <div class="header">
-    <h1>📅 Appointment Dashboard</h1>
-    <p>Book Customer Appointments</p>
-  </div>
+
   <!-- PAGE 0: Intro & Benefits -->
   <div id="page0" class="page active">
+    <div class="header">
+      <h1>📅 Appointment Dashboard</h1>
+      <p>Book Customer Appointments</p>
+    </div>
     <div class="card">
       <h2 class="intro-title">Grow Your Business with Justdial</h2>
       <p class="intro-subtitle">Watch how premium listing boosts customer acquisition</p>
@@ -486,6 +620,7 @@ button {
           Your browser does not support the video tag.
         </video>
       </div>
+
       <!-- Benefits Section -->
       <div class="benefits-section">
         <h3 class="benefits-section-title">
@@ -500,6 +635,7 @@ button {
               <p class="benefit-desc">Appear at the top of local search results when customers search for your service.</p>
             </div>
           </div>
+
           <div class="benefit-item">
             <div class="benefit-icon">🛡️</div>
             <div class="benefit-content">
@@ -507,6 +643,7 @@ button {
               <p class="benefit-desc">Earn the "JD Verified" and "JD Trusted" stamps to build instant credibility.</p>
             </div>
           </div>
+
           <div class="benefit-item">
             <div class="benefit-icon">💬</div>
             <div class="benefit-content">
@@ -514,6 +651,7 @@ button {
               <p class="benefit-desc">Get customer phone numbers, requirements, and locations directly via WhatsApp & SMS.</p>
             </div>
           </div>
+
           <div class="benefit-item">
             <div class="benefit-icon">📊</div>
             <div class="benefit-content">
@@ -523,55 +661,49 @@ button {
           </div>
         </div>
       </div>
+
       <button class="primary-btn" onclick="showPage('page1')">
-        Proceed to Book Appointment ➔
+        Business Details
       </button>
     </div>
   </div>
-  <!-- PAGE 1: Form -->
+
+  <!-- PAGE 1: Basic Info Form -->
   <div id="page1" class="page">
     <div class="card">
-      <div class="form-group">
-        <label>Vendor Name *</label>
-        <input type="text" id="vendorName" placeholder="Enter Vendor Name">
+      <div class="slot-header">
+        <button class="back-btn" onclick="showPage('page0')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <div class="slot-title">Business Details</div>
       </div>
+
       <div class="form-group">
-        <label>Customer Name *</label>
-        <input type="text" id="customerName" placeholder="Enter Customer Name">
+        <label>Business Name *</label>
+        <input type="text" id="businessName" placeholder="Enter Business Name">
       </div>
+
       <div class="form-group">
-        <label>Mobile Number *</label>
-        <input type="tel" id="mobile" placeholder="Enter Mobile Number">
+        <label>Contact Person *</label>
+        <input type="text" id="contactPerson" placeholder="Enter Contact Person Name">
       </div>
+
       <div class="form-group">
-        <label>Address</label>
-        <textarea id="address" placeholder="Enter Address"></textarea>
+        <label>Phone Number *</label>
+        <input type="tel" id="phoneNumber" placeholder="Enter Phone Number">
       </div>
-      <div class="form-group">
-        <label>Service Type *</label>
-        <select id="serviceType">
-          <option value="">Select Service</option>
-          <option>Installation</option>
-          <option>Repair</option>
-          <option>Consultation</option>
-          <option>Inspection</option>
-          <option>Maintenance</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Remarks</label>
-        <textarea id="remarks" placeholder="Optional Remarks"></textarea>
-      </div>
-      <button class="primary-btn" onclick="goToSlotSelection()">
-        Select Appointment Slot ➔
-      </button>
-      <button class="secondary-btn" onclick="showPage('page0')">
-        Back to Benefits
+
+      <button class="primary-btn" onclick="goToLocationPage()">
+        Confirm Business Address
       </button>
     </div>
   </div>
-  <!-- PAGE 1.5: Appointment Slot Selection -->
-  <div id="pageSlot" class="page">
+
+  <!-- PAGE 1.2: Combined Business Address Map & Form -->
+  <div id="pageAddress" class="page">
     <div class="card">
       <div class="slot-header">
         <button class="back-btn" onclick="showPage('page1')">
@@ -580,34 +712,81 @@ button {
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
         </button>
+        <div class="slot-title">Business Address</div>
+      </div>
+
+      <!-- Address Search Bar -->
+      <div class="search-container">
+        <input type="text" id="mapSearchInput" class="search-input" placeholder="Search address, city or area...">
+        <button class="primary-btn search-btn" onclick="searchMapLocation()">
+          Search
+        </button>
+      </div>
+
+      <!-- Map Container -->
+      <div id="map" style="height: 180px; border-radius: 12px; margin-bottom: 10px;"></div>
+
+      <button id="btnLocate" class="secondary-btn locate-btn" onclick="detectLocation()">
+        📍 My business location
+      </button>
+
+      <!-- Combined Fields -->
+      <div class="form-group">
+        <label>Building / House No. *</label>
+        <input type="text" id="addrBuilding" placeholder="e.g. Flat/Office No, Building name">
+      </div>
+
+      <div class="form-group">
+        <label>Street / Road</label>
+        <input type="text" id="addrStreet" placeholder="e.g. M.G. Road">
+      </div>
+
+      <div class="form-group">
+        <label>Area / Locality *</label>
+        <input type="text" id="addrArea" placeholder="e.g. Andheri West">
+      </div>
+
+      <div class="form-group">
+        <label>Pincode *</label>
+        <input type="tel" id="addrPincode" placeholder="6-digit PIN" maxlength="6">
+      </div>
+
+      <div class="form-group">
+        <label>Landmark</label>
+        <input type="text" id="addrLandmark" placeholder="Optional Landmark">
+      </div>
+
+      <button class="primary-btn" onclick="saveAddressAndGoToSlots()">
+        Continue to Slots ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- PAGE 1.5: Appointment Slot Selection -->
+  <div id="pageSlot" class="page">
+    <div class="card">
+      <div class="slot-header">
+        <button class="back-btn" onclick="showPage('pageAddress')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
         <div class="slot-title">Appointment Slot</div>
       </div>
-      <!-- Interactive Calendar -->
-      <div class="calendar-container">
-        <div class="calendar-header">
-          <button class="calendar-nav-btn" onclick="changeMonth(-1)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <div id="calendarMonthText" class="calendar-month">October 2023</div>
-          <button class="calendar-nav-btn" onclick="changeMonth(1)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
+
+      <!-- Segmented Date Selector (Pills for Today/Tomorrow) -->
+      <div class="date-selector-container">
+        <div id="btnToday" class="date-pill">
+          <span class="date-day-name">Today</span>
+          <span id="textTodayDate" class="date-day-val">-</span>
         </div>
-        <div class="calendar-weekdays">
-          <div>Sun</div>
-          <div>Mon</div>
-          <div>Tue</div>
-          <div>Wed</div>
-          <div>Thu</div>
-          <div>Fri</div>
-          <div>Sat</div>
+        <div id="btnTomorrow" class="date-pill">
+          <span class="date-day-name">Tomorrow</span>
+          <span id="textTomorrowDate" class="date-day-val">-</span>
         </div>
-        <div id="calendarDaysContainer" class="calendar-days"></div>
       </div>
+
       <!-- Time Slots Grid -->
       <div class="time-slots-section">
         <!-- Morning -->
@@ -624,16 +803,11 @@ button {
               <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
             </svg>
-            Morning
+            Morning (11 AM - 12 PM)
           </div>
-          <div class="slots-grid" id="morningSlots">
-            <div class="time-slot" data-time="09:00 AM">09:00 AM</div>
-            <div class="time-slot" data-time="09:30 AM">09:30 AM</div>
-            <div class="time-slot" data-time="10:00 AM">10:00 AM</div>
-            <div class="time-slot" data-time="10:30 AM">10:30 AM</div>
-            <div class="time-slot" data-time="11:00 AM">11:00 AM</div>
-          </div>
+          <div class="slots-grid" id="morningSlots"></div>
         </div>
+
         <!-- Afternoon -->
         <div class="slot-group">
           <div class="slot-group-header">
@@ -648,40 +822,42 @@ button {
               <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
             </svg>
-            Afternoon
+            Afternoon (1 PM - 4 PM)
           </div>
-          <div class="slots-grid" id="afternoonSlots">
-            <div class="time-slot" data-time="01:00 PM">01:00 PM</div>
-            <div class="time-slot" data-time="01:30 PM">01:30 PM</div>
-            <div class="time-slot" data-time="02:30 PM">02:30 PM</div>
-            <div class="time-slot" data-time="03:00 PM">03:00 PM</div>
-            <div class="time-slot" data-time="04:00 PM">04:00 PM</div>
-          </div>
+          <div class="slots-grid" id="afternoonSlots"></div>
         </div>
+
         <!-- Evening -->
         <div class="slot-group">
           <div class="slot-group-header">
             <svg class="slot-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
-            Evening
+            Evening (5 PM - 7 PM)
           </div>
-          <div class="slots-grid" id="eveningSlots">
-            <div class="time-slot" data-time="06:00 PM">06:00 PM</div>
-            <div class="time-slot" data-time="06:30 PM">06:30 PM</div>
-            <div class="time-slot" data-time="07:00 PM">07:00 PM</div>
-          </div>
+          <div class="slots-grid" id="eveningSlots"></div>
         </div>
       </div>
-      <button class="primary-btn" onclick="goToReview()">
+
+      <button class="primary-btn continue-btn" onclick="goToReview()">
         Continue ➔
       </button>
     </div>
   </div>
+
   <!-- PAGE 2: Review -->
   <div id="page2" class="page">
     <div class="card">
-      <h2 style="margin-bottom:15px; font-family: 'Outfit', sans-serif;">Confirm Appointment</h2>
+      <div class="slot-header">
+        <button class="back-btn" onclick="showPage('pageSlot')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <div class="slot-title">Confirm Appointment</div>
+      </div>
+      
       <div id="summaryBox" class="summary-box"></div>
       
       <button class="primary-btn" onclick="saveAppointment()">Confirm & Save</button>
@@ -690,6 +866,7 @@ button {
       <div class="loader" id="loader">⏳ Saving Appointment, please wait...</div>
     </div>
   </div>
+
   <!-- PAGE 3: Success -->
   <div id="page3" class="page">
     <div class="card success">
@@ -704,56 +881,152 @@ button {
       <button class="primary-btn" onclick="resetForm()">Book New Appointment</button>
     </div>
   </div>
+
 </div>
+
 <script>
+
   // ===== URL AUTO FILL =====
+
 const params = new URLSearchParams(window.location.search);
+
 const leadId =
     params.get("leadid") || "";
+
 const vendorFromUrl =
     params.get("vendor") || "";
+
 const sessionId =
     localStorage.getItem("sessionId") ||
     (Date.now() + "_" + Math.random().toString(36).substring(2));
+
 localStorage.setItem("sessionId", sessionId);
+
 // Track function fallback to prevent errors
 function trackEvent(eventName) {
   console.log("Event tracked:", eventName);
 }
-// Global variables for Selected Date & Time
-let currentCalendarDate = new Date(); // Tracks month in calendar view
-let selectedDate = new Date(); // Preset to today
-let selectedTime = null; // Stores time slot selected (e.g. '09:30 AM')
+
+// Hourly time slots (Range: 11 AM - 7 PM, no :30 slots)
+const timeSlots = [
+  { time: "11:00 AM", hour: 11, group: "morning" },
+  { time: "12:00 PM", hour: 12, group: "morning" },
+  { time: "01:00 PM", hour: 13, group: "afternoon" },
+  { time: "02:00 PM", hour: 14, group: "afternoon" },
+  { time: "03:00 PM", hour: 15, group: "afternoon" },
+  { time: "04:00 PM", hour: 16, group: "afternoon" },
+  { time: "05:00 PM", hour: 17, group: "evening" },
+  { time: "06:00 PM", hour: 18, group: "evening" },
+  { time: "07:00 PM", hour: 19, group: "evening" }
+];
+
+// Global variables for Map and selected Date & Time
+let map = null;
+let marker = null;
+let userLat = null;
+let userLon = null;
+
+let locationDetected = false; // Checks if locate button was clicked or pin dragged
+let selectedDate = null; 
+let selectedTime = null; 
+let appointmentData = {};
+
+// Helper to compare dates strictly ignoring times
+function isSameDay(date1, date2) {
+  if (!date1 || !date2) return false;
+  return date1.getDate() === date2.getDate() &&
+         date1.getMonth() === date2.getMonth() &&
+         date1.getFullYear() === date2.getFullYear();
+}
+
+function formatDateShort(date) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function initDateSelector() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  // Set date labels
+  document.getElementById("textTodayDate").textContent = formatDateShort(today);
+  document.getElementById("textTomorrowDate").textContent = formatDateShort(tomorrow);
+
+  // Calculate if today has slots (+2 hours rule)
+  const now = new Date();
+  const currentHourDecimal = now.getHours() + now.getMinutes() / 60;
+  const cutoffHour = currentHourDecimal + 2;
+
+  const todayDisabled = (cutoffHour >= 19); // 7:00 PM (19:00) is the last slot
+
+  const btnToday = document.getElementById("btnToday");
+  const btnTomorrow = document.getElementById("btnTomorrow");
+
+  // Remove previous selection states
+  btnToday.classList.remove("selected", "disabled");
+  btnTomorrow.classList.remove("selected", "disabled");
+
+  if (todayDisabled) {
+    btnToday.classList.add("disabled");
+    selectedDate = tomorrow;
+    btnTomorrow.classList.add("selected");
+  } else {
+    // If today is valid, keep today or maintain previous selection if valid
+    if (selectedDate && isSameDay(selectedDate, tomorrow)) {
+      btnTomorrow.classList.add("selected");
+    } else {
+      selectedDate = today;
+      btnToday.classList.add("selected");
+    }
+  }
+
+  // Setup click handlers
+  btnToday.onclick = () => {
+    if (todayDisabled) return;
+    btnTomorrow.classList.remove("selected");
+    btnToday.classList.add("selected");
+    selectedDate = today;
+    selectedTime = null;
+    renderTimeSlots();
+  };
+
+  btnTomorrow.onclick = () => {
+    btnToday.classList.remove("selected");
+    btnTomorrow.classList.add("selected");
+    selectedDate = tomorrow;
+    selectedTime = null;
+    renderTimeSlots();
+  };
+}
+
 window.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("vendorName").value =
-        vendorFromUrl;
-    document.getElementById("customerName").value =
-        params.get("name") || "";
-    document.getElementById("mobile").value =
-        params.get("mobile") || "";
-    document.getElementById("address").value =
-        params.get("address") || "";
-    trackEvent("landing");
-    // Initialize calendar renderer
-    renderCalendar();
-    
-    // Setup time slot selection listeners
-    document.querySelectorAll(".time-slot").forEach(slot => {
-      slot.addEventListener("click", () => {
-        if (slot.classList.contains("disabled")) return;
-        
-        // Remove previous active selection
-        document.querySelectorAll(".time-slot.selected").forEach(el => el.classList.remove("selected"));
-        
-        // Add active selection class
-        slot.classList.add("selected");
-        selectedTime = slot.getAttribute("data-time");
-      });
+    // Pre-fill inputs with URL parameters
+    document.getElementById("businessName").value = vendorFromUrl;
+    document.getElementById("contactPerson").value = params.get("name") || "";
+    document.getElementById("phoneNumber").value = params.get("mobile") || "";
+
+    // If a generic address parameter is passed, use it as a placeholder/prefill
+    const defaultUrlAddress = params.get("address") || "";
+    if (defaultUrlAddress) {
+      document.getElementById("addrStreet").value = defaultUrlAddress;
+    }
+
+    // Handle keypress 'Enter' in map search field
+    document.getElementById("mapSearchInput").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        searchMapLocation();
+      }
     });
+
+    trackEvent("landing");
 });
+
   // ✅ GOOGLE SCRIPT URL
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-joCZOs4TPIBk1udDwHg3jDJKa11gMwAcVGYe4Q7LGy5F_SGUtiFszn_1mcGUalX7KQ/exec";
-  let appointmentData = {};
+
   function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
@@ -765,114 +1038,344 @@ window.addEventListener("DOMContentLoaded", () => {
         video.pause();
       }
     }
+
+    // Leaflet requires map size recalibration on visibility toggle
+    if (pageId === 'pageAddress' && map) {
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 200);
+    }
   }
-  // Handle flow transitions from Page 1 to Slot selection
-  function goToSlotSelection() {
-    const vendorName     = document.getElementById("vendorName").value.trim();
-    const customerName   = document.getElementById("customerName").value.trim();
-    const mobile         = document.getElementById("mobile").value.trim();
-    const address        = document.getElementById("address").value.trim();
-    const serviceType    = document.getElementById("serviceType").value;
-    const remarks        = document.getElementById("remarks").value.trim();
-    if (!vendorName || !customerName || !mobile || !serviceType) {
+
+  // Phase 1 transitions
+  function goToLocationPage() {
+    const businessName   = document.getElementById("businessName").value.trim();
+    const contactPerson  = document.getElementById("contactPerson").value.trim();
+    const phoneNumber    = document.getElementById("phoneNumber").value.trim();
+
+    if (!businessName || !contactPerson || !phoneNumber) {
       alert("⚠️ Please fill all mandatory fields marked with *");
       return;
     }
+
+    // Map inputs to match original API parameters: Business Name -> vendorName, Contact Person -> customerName, Phone -> mobile
     appointmentData = {
-      vendorName, customerName, mobile, address, serviceType, remarks
+      vendorName: businessName,
+      customerName: contactPerson,
+      mobile: phoneNumber
     };
-    showPage("pageSlot");
-    renderCalendar();
-    simulateTimeSlotAvailability();
+
+    showPage("pageAddress");
+    
+    // Initialize map
+    setTimeout(initMap, 150);
   }
-  // Custom Interactive Calendar logic
-  function renderCalendar() {
-    const year = currentCalendarDate.getFullYear();
-    const month = currentCalendarDate.getMonth();
+
+  // Geolocation & Interactive Map Setups
+  function initMap() {
+    const mapContainer = document.getElementById("map");
+    if (!mapContainer) return;
     
-    const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
-    document.getElementById("calendarMonthText").textContent = `${monthNames[month]} ${year}`;
-    
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    
-    const daysContainer = document.getElementById("calendarDaysContainer");
-    daysContainer.innerHTML = "";
-    
-    // Create empty offset days
-    for (let i = 0; i < firstDayIndex; i++) {
-      const emptyDay = document.createElement("div");
-      emptyDay.classList.add("calendar-day", "empty");
-      daysContainer.appendChild(emptyDay);
+    if (map) {
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+      return;
     }
-    
+
+    // Default: Mumbai coordinates (Justdial HQ area)
+    const defaultLat = 19.0760;
+    const defaultLon = 72.8777;
+
+    try {
+      if (typeof L === 'undefined') {
+        throw new Error("Leaflet Library fails to load");
+      }
+      
+      map = L.map('map').setView([defaultLat, defaultLon], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      marker = L.marker([defaultLat, defaultLon], { draggable: true }).addTo(map);
+
+      userLat = defaultLat;
+      userLon = defaultLon;
+
+      marker.on('dragend', function () {
+        const position = marker.getLatLng();
+        userLat = position.lat;
+        userLon = position.lon;
+        
+        // Manual pin drag verifies location
+        locationDetected = true;
+        const locateBtn = document.getElementById("btnLocate");
+        locateBtn.classList.add("detected");
+        locateBtn.innerHTML = "✅ My business location (Selected)";
+        
+        reverseGeocode(userLat, userLon);
+      });
+
+      // Detect location automatically
+      detectLocation();
+
+    } catch (err) {
+      console.error("Map loading error: ", err);
+      // Fail gracefully and show message
+      mapContainer.innerHTML = `
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; padding: 15px; border-radius: 12px; text-align: center; color: #b91c1c; font-size: 13px;">
+          <p style="font-weight: 700; margin-bottom: 5px;">🗺️ Maps couldn't be loaded</p>
+          <p style="color: #7f1d1d; font-size: 12px;">Please check internet connection or fill address details manually.</p>
+        </div>
+      `;
+      userLat = defaultLat;
+      userLon = defaultLon;
+    }
+  }
+
+  function detectLocation() {
+    if (navigator.geolocation) {
+      const locateBtn = document.getElementById("btnLocate");
+      locateBtn.innerHTML = "⏳ Pinpointing Location...";
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          userLat = position.coords.latitude;
+          userLon = position.coords.longitude;
+          
+          if (map && marker) {
+            const latlng = new L.LatLng(userLat, userLon);
+            marker.setLatLng(latlng);
+            map.setView(latlng, 16);
+            reverseGeocode(userLat, userLon);
+          }
+
+          locationDetected = true;
+          locateBtn.classList.add("detected");
+          locateBtn.innerHTML = "✅ My business location (Verified)";
+        },
+        (error) => {
+          console.warn("Location services access blocked/failed: ", error);
+          locateBtn.innerHTML = "📍 My business location";
+          alert("⚠️ Could not locate your device automatically. Please type an address in the search box above or drag the pin, then click 'My business location' to verify.");
+        }
+      );
+    }
+  }
+
+  // Address lookup API search
+  async function searchMapLocation() {
+    const query = document.getElementById("mapSearchInput").value.trim();
+    if (!query) {
+      alert("⚠️ Please enter an address to search.");
+      return;
+    }
+
+    const searchBtn = document.querySelector(".search-container .primary-btn");
+    searchBtn.textContent = "Searching...";
+    searchBtn.disabled = true;
+
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+      if (response.ok) {
+        const results = await response.json();
+        if (results && results.length > 0) {
+          const firstResult = results[0];
+          userLat = parseFloat(firstResult.lat);
+          userLon = parseFloat(firstResult.lon);
+
+          if (map && marker) {
+            const latlng = new L.LatLng(userLat, userLon);
+            marker.setLatLng(latlng);
+            map.setView(latlng, 16);
+            
+            locationDetected = true;
+            const locateBtn = document.getElementById("btnLocate");
+            locateBtn.classList.add("detected");
+            locateBtn.innerHTML = "✅ My business location (Selected)";
+
+            reverseGeocode(userLat, userLon);
+          }
+        } else {
+          alert("❌ No coordinates found for this search. Try entering a nearby landmark or locality.");
+        }
+      } else {
+        alert("❌ Location search server error.");
+      }
+    } catch (err) {
+      console.error("Search error: ", err);
+      alert("❌ Search failed. Check your internet connection.");
+    } finally {
+      searchBtn.textContent = "Search";
+      searchBtn.disabled = false;
+    }
+  }
+
+  // Reverse geocodes using OpenStreetMap free Nominatim API
+  async function reverseGeocode(lat, lon) {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.address) {
+          const addr = data.address;
+          
+          const pincode = addr.postcode || "";
+          const area = addr.suburb || addr.neighbourhood || addr.village || addr.city_district || "";
+          const street = addr.road || addr.suburb || "";
+          
+          if (pincode) document.getElementById("addrPincode").value = pincode;
+          if (area) document.getElementById("addrArea").value = area;
+          if (street) document.getElementById("addrStreet").value = street;
+        }
+      }
+    } catch (err) {
+      console.error("Reverse Geocoding failed: ", err);
+    }
+  }
+
+  // Form confirmation logic and navigation to Slots
+  function saveAddressAndGoToSlots() {
+    if (!locationDetected) {
+      alert("⚠️ Mandatory: Please verify your business location on the map. Click 'My business location', search, or drag the marker pin.");
+      return;
+    }
+
+    const building = document.getElementById("addrBuilding").value.trim();
+    const street   = document.getElementById("addrStreet").value.trim();
+    const area     = document.getElementById("addrArea").value.trim();
+    const pincode  = document.getElementById("addrPincode").value.trim();
+    const landmark = document.getElementById("addrLandmark").value.trim();
+
+    if (!building || !area || !pincode) {
+      alert("⚠️ Please fill all mandatory fields marked with *");
+      return;
+    }
+
+    if (pincode.length !== 6 || isNaN(pincode)) {
+      alert("⚠️ Please enter a valid 6-digit Pincode.");
+      return;
+    }
+
+    // Save structured coordinates & text
+    appointmentData.addressDetails = {
+      building, street, area, pincode, landmark,
+      latitude: userLat,
+      longitude: userLon
+    };
+
+    let formattedAddr = building;
+    if (street) formattedAddr += `, ${street}`;
+    formattedAddr += `, ${area}`;
+    if (landmark) formattedAddr += ` (Landmark: ${landmark})`;
+    formattedAddr += ` - ${pincode}`;
+
+    // Append coordinates to the address payload text so it gets saved to the Google Sheet under address column
+    if (userLat && userLon) {
+      formattedAddr += ` [GPS: ${userLat.toFixed(5)}, ${userLon.toFixed(5)}]`;
+    }
+
+    appointmentData.address = formattedAddr;
+
+    showPage("pageSlot");
+    initDateSelector();
+    renderTimeSlots();
+  }
+
+  // Generate and filter Time slots based on +2 hours rule for Today
+  function renderTimeSlots() {
+    const morningContainer = document.getElementById("morningSlots");
+    const afternoonContainer = document.getElementById("afternoonSlots");
+    const eveningContainer = document.getElementById("eveningSlots");
+
+    morningContainer.innerHTML = "";
+    afternoonContainer.innerHTML = "";
+    eveningContainer.innerHTML = "";
+
+    const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    const isTodaySelected = isSameDay(selectedDate, today);
     
-    // Create date day elements
-    for (let day = 1; day <= lastDay; day++) {
-      const dayDiv = document.createElement("div");
-      dayDiv.classList.add("calendar-day");
-      dayDiv.textContent = day;
+    // 2 hours cutoff calculation
+    const currentHourDecimal = now.getHours() + now.getMinutes() / 60;
+    const cutoffHour = currentHourDecimal + 2;
+
+    let firstAvailableSlot = null;
+    let isCurrentSelectedTimeDisabled = false;
+
+    // First scan to determine available selection states
+    timeSlots.forEach(slot => {
+      let isDisabled = false;
+      if (isTodaySelected && slot.hour < cutoffHour) {
+        isDisabled = true;
+      }
       
-      const thisDate = new Date(year, month, day);
-      
-      if (thisDate < today) {
-        dayDiv.classList.add("disabled");
+      if (!isDisabled && !firstAvailableSlot) {
+        firstAvailableSlot = slot.time;
+      }
+      if (selectedTime === slot.time && isDisabled) {
+        isCurrentSelectedTimeDisabled = true;
+      }
+    });
+
+    // Auto update selected slot to first available if invalid or empty
+    if (isCurrentSelectedTimeDisabled || !selectedTime) {
+      selectedTime = firstAvailableSlot;
+    }
+
+    // Render time slot pills in groups
+    timeSlots.forEach(slot => {
+      const slotDiv = document.createElement("div");
+      slotDiv.classList.add("time-slot");
+      slotDiv.setAttribute("data-time", slot.time);
+      slotDiv.textContent = slot.time;
+
+      let isDisabled = false;
+      if (isTodaySelected && slot.hour < cutoffHour) {
+        isDisabled = true;
+      }
+
+      if (isDisabled) {
+        slotDiv.classList.add("disabled");
       } else {
-        // Highlight if matches current selected date
-        if (selectedDate && 
-            selectedDate.getDate() === day && 
-            selectedDate.getMonth() === month && 
-            selectedDate.getFullYear() === year) {
-          dayDiv.classList.add("selected");
+        if (selectedTime === slot.time) {
+          slotDiv.classList.add("selected");
         }
-        
-        dayDiv.addEventListener("click", () => {
-          document.querySelectorAll(".calendar-day.selected").forEach(el => el.classList.remove("selected"));
-          dayDiv.classList.add("selected");
-          selectedDate = new Date(year, month, day);
-          
-          // Re-simulate random slots for new date & reset time slot state if it is disabled
-          simulateTimeSlotAvailability();
+
+        slotDiv.addEventListener("click", () => {
+          document.querySelectorAll(".time-slot.selected").forEach(el => el.classList.remove("selected"));
+          slotDiv.classList.add("selected");
+          selectedTime = slot.time;
         });
       }
-      daysContainer.appendChild(dayDiv);
-    }
-  }
-  function changeMonth(direction) {
-    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
-    renderCalendar();
-  }
-  // Simulates booked (disabled) time slots depending on the selected date to match original screenshot look
-  function simulateTimeSlotAvailability() {
-    const slots = document.querySelectorAll(".time-slot");
-    
-    // Reset all slots first
-    slots.forEach(slot => {
-      slot.classList.remove("disabled");
-    });
-    
-    if (selectedDate) {
-      const daySeed = selectedDate.getDate();
-      
-      // Determine which index slots to disable dynamically
-      const index1 = (daySeed * 3) % slots.length;
-      const index2 = (daySeed + 7) % slots.length;
-      
-      slots[index1].classList.add("disabled");
-      slots[index2].classList.add("disabled");
-      
-      // If the currently selected time slot became disabled, reset selection
-      if (slots[index1].classList.contains("selected") || slots[index2].classList.contains("selected")) {
-        slots.forEach(s => s.classList.remove("selected"));
-        selectedTime = null;
+
+      // Route to correct category grid
+      if (slot.group === "morning") {
+        morningContainer.appendChild(slotDiv);
+      } else if (slot.group === "afternoon") {
+        afternoonContainer.appendChild(slotDiv);
+      } else if (slot.group === "evening") {
+        eveningContainer.appendChild(slotDiv);
       }
+    });
+
+    // Handle full blackout for today (no slots available)
+    if (isTodaySelected && !firstAvailableSlot) {
+      const noticeDiv = document.createElement("div");
+      noticeDiv.style.gridColumn = "span 3";
+      noticeDiv.style.color = "var(--text-muted)";
+      noticeDiv.style.fontSize = "13px";
+      noticeDiv.style.textAlign = "center";
+      noticeDiv.style.padding = "15px 10px";
+      noticeDiv.style.fontWeight = "600";
+      noticeDiv.textContent = "⚠️ No slots remaining for today. Please select tomorrow.";
+      morningContainer.appendChild(noticeDiv);
     }
   }
+
   function goToReview() {
     if (!selectedDate) {
       alert("⚠️ Please select an appointment date.");
@@ -882,47 +1385,52 @@ window.addEventListener("DOMContentLoaded", () => {
       alert("⚠️ Please select an appointment time slot.");
       return;
     }
-    // Format selectedDate for visual presentation
+
     const visualDateStr = selectedDate.toLocaleDateString('en-US', {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
+
     // Populate full body properties
     appointmentData.appointmentId = "APT" + Date.now();
-    appointmentData.appointmentDate = selectedDate.toISOString().split('T')[0]; // Format standard YYYY-MM-DD
+    appointmentData.appointmentDate = selectedDate.toISOString().split('T')[0];
     appointmentData.appointmentTime = selectedTime;
     appointmentData.createdAt = new Date().toLocaleString();
+
+    // Generate confirmation html summary box
     document.getElementById("summaryBox").innerHTML = `
-      <div class="summary-item"><b>Vendor:</b> <span>${appointmentData.vendorName}</span></div>
-      <div class="summary-item"><b>Customer:</b> <span>${appointmentData.customerName}</span></div>
-      <div class="summary-item"><b>Mobile:</b> <span>${appointmentData.mobile}</span></div>
-      <div class="summary-item"><b>Address:</b> <span>${appointmentData.address || "-"}</span></div>
+      <div class="summary-item"><b>Business Name:</b> <span>${appointmentData.vendorName}</span></div>
+      <div class="summary-item"><b>Contact Person:</b> <span>${appointmentData.customerName}</span></div>
+      <div class="summary-item"><b>Phone Number:</b> <span>${appointmentData.mobile}</span></div>
+      <div class="summary-item"><b>Business Address:</b> <span>${appointmentData.address}</span></div>
       <div class="summary-item"><b>Date:</b> <span>${visualDateStr}</span></div>
       <div class="summary-item"><b>Time:</b> <span>${appointmentData.appointmentTime}</span></div>
-      <div class="summary-item"><b>Service:</b> <span>${appointmentData.serviceType}</span></div>
-      <div class="summary-item"><b>Remarks:</b> <span>${appointmentData.remarks || "-"}</span></div>
     `;
+
     showPage("page2");
   }
+
   async function saveAppointment() {
     const loader = document.getElementById("loader");
     const confirmBtn = document.querySelector("#page2 .primary-btn");
-    // Show loader, disable button
+
     loader.style.display = "block";
     confirmBtn.disabled = true;
     confirmBtn.textContent = "Saving...";
+
     try {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",           // ✅ Required for Google Apps Script
+        mode: "no-cors",
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(appointmentData)
       });
-      // no-cors returns opaque response — assume success if no error thrown
+
       loader.style.display = "none";
       document.getElementById("appointmentId").textContent = appointmentData.appointmentId;
       showPage("page3");
+
     } catch (error) {
       loader.style.display = "none";
       confirmBtn.disabled = false;
@@ -931,9 +1439,11 @@ window.addEventListener("DOMContentLoaded", () => {
       console.error(error);
     }
   }
+
   function resetForm() {
     location.reload();
   }
+
 </script>
 </body>
 </html>
