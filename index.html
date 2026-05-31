@@ -1394,7 +1394,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Populate full body properties
     appointmentData.appointmentId = "APT" + Date.now();
-    appointmentData.appointmentDate = selectedDate.toISOString().split('T')[0];
+    
+    // Format standard YYYY-MM-DD in local time to avoid timezone offset shifts
+    const yyyy = selectedDate.getFullYear();
+    const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(selectedDate.getDate()).padStart(2, '0');
+    appointmentData.appointmentDate = `${yyyy}-${mm}-${dd}`;
+    
     appointmentData.appointmentTime = selectedTime;
     appointmentData.createdAt = new Date().toLocaleString();
 
