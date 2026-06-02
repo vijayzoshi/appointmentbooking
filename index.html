@@ -1064,6 +1064,8 @@ window.addEventListener("DOMContentLoaded", () => {
       customerName: contactPerson,
       mobile: phoneNumber
     };
+    // Track step progress
+    appointmentData.remarks = `Business details entered at ${new Date().toLocaleString()}`;
 
     showPage("pageAddress");
     
