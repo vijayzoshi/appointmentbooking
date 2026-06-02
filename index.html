@@ -1064,6 +1064,15 @@ window.addEventListener("DOMContentLoaded", () => {
       customerName: contactPerson,
       mobile: phoneNumber
     };
+    // Generate consistent appointment ID using mobile
+    appointmentData.appointmentId = `APT_${phoneNumber}_${Date.now()}`;
+    // Record step progress and post to Google Sheet
+    appointmentData.remarks = `Business details entered at ${new Date().toLocaleString()}`;
+    appointmentData.createdAt = new Date().toLocaleString();
+    // Send incremental update
+    postProgress();
+    // Track step progress
+    appointmentData.remarks = `Business details entered at ${new Date().toLocaleString()}`;
 
     showPage("pageAddress");
     
@@ -1278,6 +1287,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
     appointmentData.address = formattedAddr;
 
+    // Record step progress and post
+    appointmentData.remarks = `Address captured at ${new Date().toLocaleString()}`;
+    appointmentData.createdAt = new Date().toLocaleString();
+    postProgress();
+
     showPage("pageSlot");
     initDateSelector();
     renderTimeSlots();
@@ -1393,7 +1407,10 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     // Populate full body properties
-    appointmentData.appointmentId = "APT" + Date.now();
+    if (!appointmentData.appointmentId) {
+      // Fallback generation if not set earlier (uses mobile)
+      appointmentData.appointmentId = `APT_${appointmentData.mobile}_${Date.now()}`;
+    }
     
     // Format standard YYYY-MM-DD in local time to avoid timezone offset shifts
     const yyyy = selectedDate.getFullYear();
@@ -1403,6 +1420,9 @@ window.addEventListener("DOMContentLoaded", () => {
     
     appointmentData.appointmentTime = selectedTime;
     appointmentData.createdAt = new Date().toLocaleString();
+    // Record step progress and post incremental update
+    appointmentData.remarks = `Slot selected at ${new Date().toLocaleString()}`;
+    postProgress();
 
     // Generate confirmation html summary box
     document.getElementById("summaryBox").innerHTML = `
@@ -1426,6 +1446,7 @@ window.addEventListener("DOMContentLoaded", () => {
     confirmBtn.textContent = "Saving...";
 
     try {
+      // Final save (full payload). This also works as an incremental update.
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
