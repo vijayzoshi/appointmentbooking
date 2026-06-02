@@ -1024,8 +1024,60 @@ window.addEventListener("DOMContentLoaded", () => {
     trackEvent("landing");
 });
 
-  // ✅ GOOGLE SCRIPT URL
+// Removed stray early postProgress block to prevent errors
+
+// Ensure final save also records incremental step before full payload
+async function saveAppointment() {
+  const loader = document.getElementById("loader");
+  const confirmBtn = document.querySelector("#page2 .primary-btn");
+
+  loader.style.display = "block";
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = "Saving...";
+
+  try {
+    // Record final step remark
+    appointmentData.remarks = `Appointment saved at ${new Date().toLocaleString()}`;
+    appointmentData.createdAt = new Date().toLocaleString();
+    // Incremental post before full save
+    postProgress();
+
+    // Full save (entire payload) – also works as incremental update
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(appointmentData)
+    });
+
+    loader.style.display = "none";
+    document.getElementById("appointmentId").textContent = appointmentData.appointmentId;
+    showPage("page3");
+  } catch (error) {
+    loader.style.display = "none";
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = "Confirm & Save";
+    alert("❌ Error saving appointment: " + error.message)
+  }
+}
+
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-joCZOs4TPIBk1udDwHg3jDJKa11gMwAcVGYe4Q7LGy5F_SGUtiFszn_1mcGUalX7KQ/exec";
+
+  // Helper to post incremental progress (only appointmentId, remarks, createdAt)
+  function postProgress() {
+    const payload = {
+      appointmentId: appointmentData.appointmentId,
+      remarks: appointmentData.remarks,
+      createdAt: appointmentData.createdAt
+    };
+    console.log('Posting incremental progress:', payload);
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload)
+    }).catch(err => console.error('postProgress error:', err));
+  }
 
   function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1066,16 +1118,13 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     // Generate consistent appointment ID using mobile
     appointmentData.appointmentId = `APT_${phoneNumber}_${Date.now()}`;
-    // Record step progress and post to Google Sheet
-    appointmentData.remarks = `Business details entered at ${new Date().toLocaleString()}`;
-    appointmentData.createdAt = new Date().toLocaleString();
-    // Send incremental update
-    postProgress();
-    // Track step progress
-    appointmentData.remarks = `Business details entered at ${new Date().toLocaleString()}`;
 
-    showPage("pageAddress");
+    appointmentData.createdAt = new Date().toLocaleString();
     
+    // Record step progress
+    appointmentData.remarks = `Business details entered at ${new Date().toLocaleString()}`;
+    postProgress();
+
     // Initialize map
     setTimeout(initMap, 150);
   }
