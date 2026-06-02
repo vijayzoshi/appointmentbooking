@@ -1395,7 +1395,9 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     // Populate full body properties
-    appointmentData.appointmentId = "APT" + Date.now();
+  //  appointmentData.appointmentId = "APT" + Date.now();
+
+    appointmentData.appointmentId = "APT" + document.getElementById("phoneNumber").value.trim()
     
     // Format standard YYYY-MM-DD in local time to avoid timezone offset shifts
     const yyyy = selectedDate.getFullYear();
